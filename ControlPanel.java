@@ -776,6 +776,12 @@ public class ControlPanel extends javax.swing.JFrame {
         sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
         MEMORY.setDirect(sVal, sData);
         
+        sVal = Long.toBinaryString(0);
+        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
+        sData = Long.toBinaryString(300);
+        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
+        MEMORY.setDirect(sVal, sData);
+        
         
         IX1.set(Long.toBinaryString(314));
         

@@ -173,6 +173,17 @@ public class Decoder {
                         + immed;                                                        // immediate
             }
             
+              else if (operator.equals("aix") ){
+                String IX = formatCode(Integer.toBinaryString(Integer.valueOf(restTemp[0])), 2);
+                String immed = formatCode(Integer.toBinaryString(Integer.valueOf(restTemp[1])), 8);
+                operator = Integer.toBinaryString(8);                
+                operator = formatCode(operator, 6);
+                binaryCode = operator                                                   // opcode
+                        + IX                                                                               // IX
+                        + "0000"                                                        // R, I, T (ignored)
+                        + immed;                                                        // immediate
+            }
+            
             // MLT, DVD, TRR, AND, ORR
             else if(operator.equals("mlt") || operator.equals("dvd") || operator.equals("trr")
                     || operator.equals("and") || operator.equals("orr")){

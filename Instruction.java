@@ -193,6 +193,10 @@ public class Instruction extends Thread {
                    AppendInstructionAsText("SIR");
                    SIR();
                    break; 
+              case 8:
+                   AppendInstructionAsText("AIX");
+                   AIX();
+                   break; 
               case 10:
                    AppendInstructionAsText("JZ");
                    JZ();
@@ -652,13 +656,21 @@ public class Instruction extends Thread {
     */
     public void SIR(){
           pcIncrease();
-
-
           ComputeEffectiveAddress();
     	  getALU().OP2.set(getADDR().get());
     	  getALU().OP1.set(SelectRegister().get());
     	  getALU().sub();
     	  SelectRegister().set (getALU().RES.get());
+          pause(MIDDLE);
+    }
+    
+      public void AIX(){
+          pcIncrease();
+          ComputeEffectiveAddress();
+    	  getALU().OP2.set(getADDR().get());
+    	  getALU().OP1.set(SelectIndexRegister().get());
+    	  getALU().add();
+    	  SelectIndexRegister().set (getALU().RES.get());
           pause(MIDDLE);
     }
     
