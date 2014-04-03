@@ -69,7 +69,7 @@ public class RomLoader {
         while (line != null && !mStopFlag) { 
         	InstructCount++;
         	decodeInstruction(line);
-                //ControlPanel.jMessages.append("Read instruction from file"+pfilePath+":"+line+"\n");
+                ControlPanel.jMessages.append(line+"\n");
                 line = br.readLine(); 
         }
         if (line==null) {
