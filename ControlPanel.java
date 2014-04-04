@@ -778,12 +778,30 @@ public class ControlPanel extends javax.swing.JFrame {
         
         sVal = Long.toBinaryString(0);
         sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(300);
+        sData = Long.toBinaryString(200);
+        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
+        MEMORY.setDirect(sVal, sData);
+        
+        sVal = Long.toBinaryString(528);
+        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
+        sData = Long.toBinaryString(201);
+        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
+        MEMORY.setDirect(sVal, sData);
+        
+        sVal = Long.toBinaryString(545);
+        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
+        sData = Long.toBinaryString(202);
+        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
+        MEMORY.setDirect(sVal, sData);
+        
+        sVal = Long.toBinaryString(535);
+        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
+        sData = Long.toBinaryString(203);
         sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
         MEMORY.setDirect(sVal, sData);
         
         
-        IX1.set(Long.toBinaryString(314));
+        IX3.set(Long.toBinaryString(511));
         
         if (this.running) {
           //stop running the bootloader if it's reading file,or stop the processor if it's executing instructions
