@@ -1,18 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/***
+ * This class includes all INSTRUCTION SET of the our simulator.
+ * In order to examine the internal step of or the each instructions, 
+ * this class extends the thread. By setting the working process from the ControlPanel class
+ * internal process of the instructions can be seen step by step while program is working
  */
 
 package simulator;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.JTextComponent;
 
-/**
- *
- * @author Yixing
- */
+
 public class Instruction extends Thread {
     
     /* Contants used to decide the position of pause */
@@ -97,11 +96,8 @@ public class Instruction extends Thread {
 
         if (controlPanel.runType != 5){ // run a program in a file
             
-            controlPanel.jMessages.append("Boot Completed! Loaded\n"+ controlPanel.getmBootLoader().getInstructCount()+" instructions from file "+getPfileName()+"\n");
+            controlPanel.jMessages.append("Boot Completed!\n");
            
-            ControlPanel.btnStepRun.setText("<html>Continue Running <br> Step by Step </html>");
-            ControlPanel.btnMicroRun.setText("<html>Continue Running <br> in Micro Step </html>");
-            
             //HLT
             while(!MEMORY.get(PC.get()).substring(0,6).equals("000000")){
                 
@@ -134,10 +130,7 @@ public class Instruction extends Thread {
         isRunning = true;
         isFinished = false;
     	CC.set("0010");//Initilize CC for test 
-        //PC.set("0");
-         
-         //IR.set(strSwitches);
-        
+              
         if (controlPanel.runType!=5){
         IR.set(MEMORY.get(PC.get()));
          opcodeCondition = IR.get().substring(0, 6);
@@ -162,9 +155,12 @@ public class Instruction extends Thread {
               Decode();
           }
          controlPanel.getLblOpcode().setText(OPCODE.get());
-         //ComputeEffectiveAddress(); 
-                        
+        
          switch (Integer.parseInt(OPCODE.get(),2)) {
+              case 0:
+                 AppendInstructionAsText("HLT");
+                 HLT();
+                 break;
               case 1:
                  AppendInstructionAsText("LDR");
                  LDR();
@@ -196,6 +192,10 @@ public class Instruction extends Thread {
               case 8:
                    AppendInstructionAsText("AIX");
                    AIX();
+                   break; 
+               case 9:
+                   AppendInstructionAsText("SIX");
+                   SIX();
                    break; 
               case 10:
                    AppendInstructionAsText("JZ");
@@ -290,17 +290,11 @@ public class Instruction extends Thread {
          ControlPanel.lblPC.setText(String.format("%s", Integer.parseInt(PC.get(),2)));
          pause(END);
          
-             
-        
          isFinished = true;
          isRunning = false;
          
     }
 
-    /**
-     * @auther Yixing
-     * pause between steps and update controlPanel
-     */ 
     public void pause(int pauseType) {
         switch (controlPanel.runType) {
             case 1: // run without stop
@@ -477,7 +471,6 @@ public class Instruction extends Thread {
     private void DecodeLogicalInstruct(){
    
         getOPCODE().set(getStrSwitches().substring(0,6));;
-        //XF.set(strSwitches.substring(6,8));
         getRF().set(getStrSwitches().substring(8,10));
         getI().set(getStrSwitches().substring(10,11));
         getT().set(getStrSwitches().substring(11,12));
@@ -573,6 +566,12 @@ public class Instruction extends Thread {
             getMBR().set(getMEMORY().get(getMAR().get()));
     }
     
+     public void HLT() {
+        
+       PC.set("0");
+    
+    }
+    
     /**
     * Load Register From Memory
     */    
@@ -593,8 +592,7 @@ public class Instruction extends Thread {
 
             ComputeEffectiveAddress();
             getMEMORY().set(SelectRegister().get(), getMAR().get());
-        
-    
+   
     }
     
     /**
@@ -673,6 +671,16 @@ public class Instruction extends Thread {
     	  SelectIndexRegister().set (getALU().RES.get());
           pause(MIDDLE);
     }
+      
+       public void SIX(){
+          pcIncrease();
+          ComputeEffectiveAddress();
+    	  getALU().OP2.set(getADDR().get());
+    	  getALU().OP1.set(SelectIndexRegister().get());
+    	  getALU().sub();
+    	  SelectIndexRegister().set (getALU().RES.get());
+          pause(MIDDLE);
+    }
     
     /**
      * Load index register from memory
@@ -744,9 +752,7 @@ public class Instruction extends Thread {
      public void JCC(){
          
         ComputeEffectiveAddress();
-       // CC.set("0010");
         
-              
         if  (getCC().get(getRF().Index + 1) == 1) { // if cc(bit-I) = 1
                         
            if (getI().get().equals("0")) 
@@ -847,10 +853,7 @@ public class Instruction extends Thread {
         }
         else {
             pcIncrease();
-            getALU().OP2.set(getPC().get());
-    	    getALU().OP1.set("1");
-    	    getALU().add();
-            getPC().set (getALU().RES.get());
+            
         }
             
       }
@@ -861,7 +864,7 @@ public class Instruction extends Thread {
      */
      public void MLT() {
         pcIncrease();
-        if ((getXF().get().equals("00") || getXF().get().equals("10")) && (getRF().get().equals("00") || getRF().get().equals("10"))) {
+    //    if ((getXF().get().equals("00") || getXF().get().equals("10")) && (getRF().get().equals("00") || getRF().get().equals("10"))) {
             getALU().OP1.set(SelectRegister().get());//OP1 contains Ry
             //String RFcopy = RF.get();
             //String opOne = ALU.OP1.get();
@@ -873,12 +876,13 @@ public class Instruction extends Thread {
             //RF.set(RFcopy);
             
             //String Result = ALU.RESlong.get();
-            SelectRegister().set(getALU().RESlong.get().substring(0, 20));
+            //SelectRegister().set(getALU().RESlong.get().substring(0, 20));
+            SelectRegister().set(getALU().RES.get());
             pause(MIDDLE);
-            SelectNextRegister().set(getALU().RESlong.get().substring(20, 40));
-            pause(MIDDLE);
+//            SelectRegister().set(getALU().RESlong.get().substring(20, 40));
+//            pause(MIDDLE);
             
-        }
+      //  }
     }
 
     /**
@@ -1026,18 +1030,27 @@ public class Instruction extends Thread {
                   DATA = GPR1.get();
                   break;
                   }
-         
-          SelectRegister().set(DATA);
+          int numericValue = Integer.parseInt(DATA,2);
+          if (48<=numericValue && numericValue<=57) {
+              numericValue = Character.getNumericValue(numericValue);
+          }
+          else if (numericValue!=13) 
+              HLT();
+//               if not numeric reject for the program-1
+              
+          
+          SelectRegister().set(Long.toBinaryString(numericValue));
           //pause(MIDDLE);
           
      }
      
      public void OUT() {
           pcIncrease();
-         
+          
           switch (Integer.parseInt(DEVID.get(),2)){
               case 1:
                   PRINTER.GetData(SelectRegister().get());
+                  
                   break;
               case 2:
                   //DATA = CARD READER

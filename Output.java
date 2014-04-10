@@ -1,18 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * This class simulates the output (printer) of our simulator.
+ * It prints the data available to the label.
  */
+
 package simulator;
 
 import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-/**
- *
- * @author mehmet
- */
+
 public class Output extends javax.swing.JPanel {
     
     private JPanel jPanel = new javax.swing.JPanel();
@@ -25,27 +22,32 @@ public class Output extends javax.swing.JPanel {
        OUTPUT = "";
        
        initComponents();
-        
-      //jLabel.setText("<html>");
-      
+     
     }
     
-    
+    /**
+     * This method get data to be printed from the registers.And shows as a label.
+     * @param s data to be printed.
+     */
     public void GetData(String s) {
         STATUS = "0";
-        OUTPUT += s + "<br>";
+        OUTPUT += String.format("%s",Integer.parseInt(s,2)) + "<br>";
         jLabel.setText("<html>" + OUTPUT + "</html>");
         STATUS = "1";
      
     }
     
+    /**
+     * This is the initialization for the printer panel. 
+     */
     public void initComponents() {
         
         this.add(jPanel);
         this.add(jLabel);
          
-        jPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Printer", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Ubuntu", 1, 14), java.awt.Color.blue)); // NOI18N
-        jPanel.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Printer", javax.swing.border.TitledBorder.RIGHT, javax.swing.border.TitledBorder.LEADING, new java.awt.Font("Verdana", 1, 11), java.awt.Color.blue)); // NOI18N
+        jPanel.setFont(new java.awt.Font("Verdana", 1, 8)); // NOI18N
+        jLabel.setFont(new java.awt.Font("Verdana", 1, 11));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel);
         jPanel.setLayout(jPanel4Layout);
@@ -60,12 +62,8 @@ public class Output extends javax.swing.JPanel {
             .addComponent(jLabel)
         );
         
-         jPanel.setPreferredSize(new Dimension(180, 410));
-        
-        
- 
-       
-         
+         jPanel.setPreferredSize(new Dimension(180, 710));
+     
      }
     
 }

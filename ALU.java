@@ -81,9 +81,10 @@ public class ALU {
         long OPOne = Integer.parseInt(OP1.get().substring(1, 20), 2);
         long OPTwo = Integer.parseInt(OP2.get().substring(1, 20), 2);
         long multiResult = OPOne*OPTwo;
-        RESlong.set(Long.toBinaryString(multiResult));
-        RESlong.set(signBite+RESlong.get().substring(1, 40));
-        String teststring = RESlong.get();
+//        RESlong.set(Long.toBinaryString(multiResult));
+//        RESlong.set(signBite+RESlong.get().substring(1, 40));
+//        String teststring = RESlong.get();
+        RES.set( Long.toBinaryString(multiResult));
     }
 
     public void divide() {

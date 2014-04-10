@@ -1,8 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * This class converts the assembly code into binary code for each instruction.
  */
+
 package simulator;
 
 public class Decoder {
@@ -173,10 +172,16 @@ public class Decoder {
                         + immed;                                                        // immediate
             }
             
-              else if (operator.equals("aix") ){
+              else if (operator.equals("aix") || (operator.equals("six"))){
                 String IX = formatCode(Integer.toBinaryString(Integer.valueOf(restTemp[0])), 2);
                 String immed = formatCode(Integer.toBinaryString(Integer.valueOf(restTemp[1])), 8);
-                operator = Integer.toBinaryString(8);                
+                 if(operator.equals("aix")){
+                    operator = Integer.toBinaryString(8);
+                }
+                else if(operator.equals("six")){
+                    operator = Integer.toBinaryString(9);
+                }
+                             
                 operator = formatCode(operator, 6);
                 binaryCode = operator                                                   // opcode
                         + IX                                                                               // IX

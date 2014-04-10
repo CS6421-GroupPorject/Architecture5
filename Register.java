@@ -18,10 +18,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 public class Register extends javax.swing.JPanel {
     
@@ -35,8 +34,7 @@ public class Register extends javax.swing.JPanel {
     private javax.swing.JTextField txtDeposit;
     private javax.swing.JButton btnDeposit;
     private HashMap componentMap;
-    
-    
+       
 
     /**
      * This constructor instantiates a new register 

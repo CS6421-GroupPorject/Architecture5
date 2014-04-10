@@ -149,7 +149,7 @@ public class Cache {
            DATA = ControlPanel.MEMORY.getDirect(Long.toBinaryString(TAG+i-1));
            SetDataBitsIntheBlock(DATA,block, i*indexStart, indexEnd+((i-1)*indexStart));
            sMsg = sMsg + String.format("%s",TAG+i-1) + "-";
-           //ControlPanel.jMessages.append("CACHE(" + String.format("%s",TAG+i-1) + ") --> " + Integer.parseInt(DATA,2) + "\n");
+           
        }
        ControlPanel.jMessages.append("CACHE(" + block + ") --> " + sMsg.substring(0, sMsg.length()-1) + "\n");
              
@@ -191,7 +191,6 @@ public class Cache {
                 CACHE_DATA[i][5] = Integer.parseInt(sOffSet.substring(0,1)); // first bit of offset 01 -> 1
                 CACHE_DATA[i][6] = Integer.parseInt(sOffSet.substring(1,2)); // second bit of offset 01 -> 0
                 UpdateWordInBlock(i,WORD);
-                //System.out.println("Write Hit!");
                 ControlPanel.jMessages.append("Write Hit!\n");
                 OntheCache = true;
                 break;

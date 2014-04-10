@@ -1,12 +1,14 @@
+/**
+ * This class loads instructions from file.
+ * 
+ * 
+*/
+
 package simulator;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-
 
 public class RomLoader {
 	private ControlPanel mControlPanel;
@@ -18,7 +20,6 @@ public class RomLoader {
 	 */
 	public static final int BOOT_ADD_LIMIT=512;
 	private int InstructCount=0;
-	
 	
 	
 	/**
@@ -94,13 +95,10 @@ public class RomLoader {
 	private void decodeInstruction(String pOneInst) {
 		String binaryInst="";
 		
-                Decoder decoder = new Decoder();
-//                
+                Decoder decoder = new Decoder();        
 		binaryInst = decoder.toBinary(pOneInst);
-//                
-//              binaryInst = pOneInst;
-        
-                    
+
+                          
 		if (binaryInst.isEmpty()) {
 			stopRunning("Loading unknown Instruction..."+pOneInst);
 			
@@ -129,8 +127,6 @@ public class RomLoader {
 			
 			ControlPanel.MEMORY.setDirect(pBineryInst,sAddr);
 		}
-		
-		
 		
 	}
 	

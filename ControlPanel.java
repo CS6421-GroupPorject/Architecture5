@@ -1,27 +1,19 @@
+/**
+ * This class is the main form of the CPU simulator project
+ * It serves as the User Interface that simulates the console of the CS6461 Computer
+ * It hold IPL button to start computer, switches as radio buttons for providing input
+ * As the output of the computer, it shows basic registers and their current situations.
+ * 
+ */
+
 package simulator;
-
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JLabel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class ControlPanel extends javax.swing.JFrame {
     
     boolean running;
-    URL UrlON = getClass().getResource("ON.jpg");   
-    URL UrlOFF = getClass().getResource("OFF.jpg"); 
-    ImageIcon iconON = new ImageIcon(UrlON);
-    ImageIcon iconOFF = new ImageIcon(UrlOFF);
+    
     String strSwitches;
     String strCardReader;
-    //String sInst = "";
     private RomLoader mBootLoader;
     public static int[] a= new int[10];
     public static int counter=0; 
@@ -40,7 +32,6 @@ public class ControlPanel extends javax.swing.JFrame {
     public static Memory MEMORY;
     ALU ALU;
     
-    
     Instruction instructionThread = new Instruction(this); // thread for running a program
     Instruction programInstructionThread = new Instruction(this);
     Instruction singleInstructionThread = new Instruction(this); // thread for running a single instruction
@@ -58,9 +49,7 @@ public class ControlPanel extends javax.swing.JFrame {
     public ControlPanel() {
         
         initComponents();
-        
-        
-        lblONOFF.setIcon(iconOFF);
+      
         OPCODE = new Register("OPCODE", 6, false);
         ADDR = new Register("ADDR", 8, false);
         IR = new Register("IR", 20, false);
@@ -125,13 +114,6 @@ public class ControlPanel extends javax.swing.JFrame {
         jRadioButton19 = new javax.swing.JRadioButton();
         jRadioButton20 = new javax.swing.JRadioButton();
         btnSingleStep = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        btnDeposit = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtMemoryAddr = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        txtMemoryValue = new javax.swing.JTextField();
-        lblONOFF = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jMessages = new javax.swing.JTextArea();
@@ -145,8 +127,6 @@ public class ControlPanel extends javax.swing.JFrame {
         btnClr = new javax.swing.JButton();
         label1 = new javax.swing.JLabel();
         label2 = new javax.swing.JLabel();
-        btnStepRun = new javax.swing.JButton();
-        btnMicroRun = new javax.swing.JButton();
         KEYBORD = new simulator.Input();
         PRINTER = new simulator.Output();
 
@@ -407,58 +387,11 @@ public class ControlPanel extends javax.swing.JFrame {
                 .addComponent(btnSingleStep))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        btnDeposit.setText("Deposit on Memory");
-        btnDeposit.setToolTipText("");
-        btnDeposit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDepositActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText(" Address");
-
-        jLabel2.setText("Value");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(txtMemoryAddr, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(txtMemoryValue, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtMemoryAddr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtMemoryValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDeposit)
-                .addContainerGap())
-        );
-
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jMessages.setEditable(false);
         jMessages.setColumns(10);
         jMessages.setRows(5);
+        jMessages.setAutoscrolls(false);
         jScrollPane1.setViewportView(jMessages);
 
         label.setBackground(new java.awt.Color(130, 125, 204));
@@ -489,28 +422,34 @@ public class ControlPanel extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel13)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblOpcode))
+                                .addContainerGap()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel13)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblOpcode))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel14)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblPC))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel15)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblCC)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnClr))
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel14)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblPC))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel15)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblCC)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnClr))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(label)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(label)
+                                .addGap(23, 23, 23)))
+                        .addGap(0, 25, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1)))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -546,190 +485,85 @@ public class ControlPanel extends javax.swing.JFrame {
         label2.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         label2.setText("Press IPL to run");
 
-        btnStepRun.setText("<html>Test Instructions <br>\nStep by Step </html>"); // NOI18N
-        btnStepRun.setToolTipText("Click here to run one instruction each time");
-        btnStepRun.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnStepRunActionPerformed(evt);
-            }
-        });
-
-        btnMicroRun.setText("<html>Test Instructions <br> In Micro Step </html>");
-        btnMicroRun.setToolTipText("Click here to run one micro step each time ");
-        btnMicroRun.setActionCommand("microRun");
-        btnMicroRun.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMicroRunActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(971, 971, 971))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addComponent(MAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(label1)
                             .addComponent(GPR0, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(GPR1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(GPR2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(GPR3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(IX1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(IX2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(IX3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(PRINTER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(label2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(MBR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(254, 254, 254)
-                                .addComponent(label1)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(KEYBORD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(IX3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(MBR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(MAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnIPL, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblONOFF, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnStepRun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(7, 7, 7)
-                        .addComponent(btnMicroRun, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(label2)
+                    .addComponent(KEYBORD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(PRINTER, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(label2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnIPL, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btnMicroRun, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btnStepRun, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addComponent(lblONOFF, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(KEYBORD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(label1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(GPR0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(GPR1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(GPR2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(GPR3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(IX1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(IX2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(label1))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(35, 35, 35)
-                                        .addComponent(GPR0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(GPR1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(8, 8, 8)
-                                        .addComponent(GPR2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(GPR3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(IX1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(2, 2, 2)
-                                        .addComponent(IX2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(4, 4, 4)
-                                        .addComponent(IX3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(MBR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(MAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(KEYBORD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(PRINTER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(IX3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(MBR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(MAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 671, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(50, 50, 50)
-                .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(391, 391, 391))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(PRINTER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * This action when btnDeposit button clicked is used to store values directly into MEMORY(address accept 0-511,or bigger than 1024)
-     * This makes easier to test
-     * TextBoxes take address and value as decimal
-     * Function converts these values to binary string and pads with 0s to until to word size (20 bit)
-     * Then, these values is set in the MEMORY.
-     */
-   private void btnDepositActionPerformed(java.awt.event.ActionEvent evt) {                                           
-
-        String sVal, sAddr;       
-        sVal = Long.toBinaryString(Integer.parseInt(txtMemoryValue.getText()));
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        
-      	// put invalidate warning on ControlPanel for the Only-BootLoader-Access Mem address
-        int sAddrNum=Integer.parseInt(txtMemoryAddr.getText());
-        if (sAddrNum<512||sAddrNum>=1024) {
-			
-        	sAddr = Long.toBinaryString(Integer.parseInt(txtMemoryAddr.getText()));
-        	sAddr = String.format("%0" + (20-sAddr.length())+ "d", 0) + sAddr;
-        	
-        	MEMORY.setDirect(sVal,sAddr);
-        	txtMemoryAddr.setText("");
-        	txtMemoryValue.setText("");
-		}
-        else {
-        	jMessages.append("Invalid address reserved for BIOS,choose a smaller one!\n");
-		      
-		}
-     
-    }                                          
-
-//    /**
-//     * start executing  from the first instructions read from the file
-//     * @param pfileName
-//     * @throws java.lang.InterruptedException
-//     */
-//    public void executeFile(String pfileName) throws InterruptedException {
-//    	jMessages.append("Boot Completed! Loaded "+ getmBootLoader().getInstructCount()+" instructions from file "+pfileName+"\n");
-//    	for (int i = 0; i <getmBootLoader().getInstructCount() && running ; i++) {
-//            String sAddr;
-//            sAddr = Long.toBinaryString(512+i);
-//            sAddr = String.format("%0" + (20-sAddr.length())+ "d", 0) + sAddr;
-//            
-//            getMAR().set(sAddr);
-//            getMBR().set(MEMORY.get(getMAR().get()));
-//            strSwitches=MEMORY.get(getMAR().get());
-//            executeOneInst();
-//            
-//            // wait until the thread in executeOneInst() is finished or pause
-//            while(!instructionThread.isFinished && instructionThread.isRunning) {    
-//                Thread.sleep(10);
-//            }
-//            
-//        }
-//    	stopRunning("Program running Completed!");
-//    }
-    
+       
     /**
      * stop the process from running state
      * @param stop runing reason to be displayed
@@ -737,10 +571,8 @@ public class ControlPanel extends javax.swing.JFrame {
     public void stopRunning(String msg) {
     	
     	this.running = false;
-        lblONOFF.setIcon(iconOFF);
         jMessages.append("Stop running:"+msg+"\n");
-        btnStepRun.setText("<html>Test Instructions <br> Step by Step </html>");
-        btnMicroRun.setText("<html>Test Instructions <br> in Micro Step </html>");
+
     }
     
     
@@ -750,8 +582,7 @@ public class ControlPanel extends javax.swing.JFrame {
      */
     public void startRunning(String msg){
     	this.running = true;
-    	lblONOFF.setIcon(iconON); 
-    	jMessages.append("Booting from:"+msg+"\n");
+      	jMessages.append("Booting from:"+msg+"\n");
     	
     }
     
@@ -764,44 +595,30 @@ public class ControlPanel extends javax.swing.JFrame {
         String sVal, sData;
         strCardReader= "program1.txt";
         runType = 1;    // run without pause
-        sVal = Long.toBinaryString(5);
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(150);
-        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-        MEMORY.setDirect(sVal, sData);
         
-        sVal = Long.toBinaryString(100);
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(151);
-        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-        MEMORY.setDirect(sVal, sData);
-        
-        sVal = Long.toBinaryString(0);
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(200);
-        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-        MEMORY.setDirect(sVal, sData);
-        
-        sVal = Long.toBinaryString(528);
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(201);
-        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-        MEMORY.setDirect(sVal, sData);
-        
-        sVal = Long.toBinaryString(545);
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(202);
-        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-        MEMORY.setDirect(sVal, sData);
-        
-        sVal = Long.toBinaryString(535);
-        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-        sData = Long.toBinaryString(203);
-        sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-        MEMORY.setDirect(sVal, sData);
-        
+        /**
+         * Initial values for the program-1 for base-addressing and some constant values 
+         * such as ASCII of Carriage Return (13), 1, 10
+         */
+        InitialMemory(20,150);
+        InitialMemory(20,249);
+        InitialMemory(100,151);
+        InitialMemory(528,201);
+        InitialMemory(545,202);
+        InitialMemory(535,203);
+        InitialMemory(13,155);
+        InitialMemory(1,153);
+        InitialMemory(10,154);
+        InitialMemory(10,144);
+        InitialMemory(160,158);
+        InitialMemory(0,200);
+        InitialMemory(126,145);
+        InitialMemory(160,143);
+        InitialMemory(111111,11);
         
         IX3.set(Long.toBinaryString(511));
+        IX1.set(Long.toBinaryString(0));
+        IX2.set(Long.toBinaryString(160));
         
         if (this.running) {
           //stop running the bootloader if it's reading file,or stop the processor if it's executing instructions
@@ -818,7 +635,18 @@ public class ControlPanel extends javax.swing.JFrame {
         }
     }                                      
 
-
+    private void InitialMemory(Integer DATA, Integer ADDR) {
+        
+        String sDATA, sADDR;
+        sDATA = Long.toBinaryString(DATA);
+        sDATA = String.format("%0" + (20-sDATA.length())+ "d", 0) + sDATA;
+        sADDR = Long.toBinaryString(ADDR);
+        sADDR = String.format("%0" + (20-sADDR.length())+ "d", 0) + sADDR;
+        MEMORY.setDirect(sDATA, sADDR);
+    
+    
+    }
+    
     /**
      * This action when btnSingleStep button is clicked runs the instruction which 
      * is set by switches (radio button
@@ -834,15 +662,7 @@ public class ControlPanel extends javax.swing.JFrame {
             strSwitches = GetSwitchValues();
             singleInstructionThread.start();
 
-            //  wait until the thread in executeOneInst() is finished or pause
-//            while(!instructionThread.isFinished && instructionThread.isRunning) {    
-//                try {
-//                    Thread.sleep(10);
-//                } catch (InterruptedException ex) {
-//                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-        }
+            }
         else {
             if (!singleInstructionThread.isRunning) {
                 singleInstructionThread.resume();
@@ -856,152 +676,10 @@ public class ControlPanel extends javax.swing.JFrame {
      // lblPC.setText(String.format("%s", Integer.parseInt(PC.get(),2)));
     }//GEN-LAST:event_btnSingleStepActionPerformed
 
-    /**
-     * This action when Auto Run button is clicked starts the Simulator in test mode
-     * It will run one instruction each time when clicking this button
-     */
-    private void btnStepRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStepRunActionPerformed
-        
-        runType = 2;
-        if (!instructionThread.isStarted) {
-            String sVal, sData;
-            strCardReader= "program2.txt";
-            
-            sVal = Long.toBinaryString(33);
-            sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-            sData = Long.toBinaryString(55);
-            sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-
-            MEMORY.setDirect(sVal, sData);
-            
-             sVal = Long.toBinaryString(176);
-            sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-            sData = Long.toBinaryString(158);
-            sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-
-            MEMORY.setDirect(sVal, sData);
-            
-             sVal = Long.toBinaryString(45);
-            sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-            sData = Long.toBinaryString(176);
-            sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-
-            MEMORY.setDirect(sVal, sData);
-            
-            IX1.set(Long.toBinaryString(264));
-
-    //        sVal = Long.toBinaryString(40);
-    //        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-    //        sData = Long.toBinaryString();
-    //        sData = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-          //  IX1.set(Long.toBinaryString(314));
-            
-                    try {
-
-                            getmBootLoader().readCard(strCardReader);
-
-                            } catch (Exception e) {
-                                    stopRunning("wrong instruction error:"+e.toString());
-                            }
-            
-        }
-        else {
-            if (!instructionThread.isRunning) {
-                instructionThread.resume();
-                instructionThread.isRunning = true;
-            }
-            else {
-                jMessages.append("Error: Cannot continue! Thread is running already\n");
-            }
-        }
-    }//GEN-LAST:event_btnStepRunActionPerformed
-
-    /**
-     * This action when Auto Run button is clicked starts the Simulator in test mode
-     * It will run one micro step each time when clicking this button
-     */
-    private void btnMicroRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMicroRunActionPerformed
-        
-        runType = 3;    
-        if (!instructionThread.isStarted) {
-            String sVal, sData;
-            strCardReader= "program2.txt";
-            
-            sVal = Long.toBinaryString(5);
-            sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-            sData = Long.toBinaryString(100);
-            sData = String.format("%0" + (20-sData.length())+ "d", 0) + sData;
-
-            MEMORY.setDirect(sVal, sData);
-
-    //        sVal = Long.toBinaryString(40);
-    //        sVal = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-    //        sData = Long.toBinaryString();
-    //        sData = String.format("%0" + (20-sVal.length())+ "d", 0) + sVal;
-            IX1.set(Long.toBinaryString(314));
-            
-                    try {
-
-                            getmBootLoader().readCard(strCardReader);
-
-                            } catch (Exception e) {
-                                    stopRunning("wrong instruction error:"+e.toString());
-                            }
-            
-        }
-        else {
-            if (!instructionThread.isRunning) {
-                instructionThread.resume();
-                instructionThread.isRunning = true;
-            }
-            else {
-                jMessages.append("Error: Cannot continue! Thread is running already\n");
-            }
-        }
-    }//GEN-LAST:event_btnMicroRunActionPerformed
-
     private void btnClrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClrActionPerformed
       jMessages.setText("");
     }//GEN-LAST:event_btnClrActionPerformed
      
-    
-//    private void executeOneInst(){
-//        
-//        instructionThread = new Instruction(this);
-//        instructionThread.isRunning = true;
-//        
-//        if(runType != 5){
-//            instructionThread.setInstructionNum(getmBootLoader().getInstructCount());
-//        }
-//        
-//        /* set the value of parameters in instructionThread */
-//        
-//        instructionThread.setXF(XF);
-//        instructionThread.setRF(RF);
-//        instructionThread.setI(I);
-//        instructionThread.setT(T);
-//        instructionThread.setMEMORY(MEMORY);
-//        instructionThread.setALU(ALU);
-//        instructionThread.setIR(IR);
-//        instructionThread.setOPCODE(OPCODE);
-//        instructionThread.setADDR(ADDR);
-//        instructionThread.setCC(CC);
-//        instructionThread.setPC(PC);
-//        instructionThread.setMAR(getMAR());
-//        instructionThread.setMBR(getMBR());
-//        instructionThread.setIX1(getIX1());
-//        instructionThread.setIX2(getIX2());
-//        instructionThread.setIX3(getIX3());
-//        instructionThread.setGPR0(getGPR0());
-//        instructionThread.setGPR1(getGPR1());
-//        instructionThread.setGPR2(getGPR2());       
-//        instructionThread.setGPR3(getGPR3());
-//        instructionThread.setStrSwitches(strSwitches);
-//            
-//        instructionThread.start();
-//            
-//    }
-    
       
     /**
      * This function gets the the input by reading radio button values
@@ -1087,11 +765,8 @@ public class ControlPanel extends javax.swing.JFrame {
     private simulator.Register MBR;
     private simulator.Output PRINTER;
     private javax.swing.JButton btnClr;
-    private javax.swing.JButton btnDeposit;
     private javax.swing.JToggleButton btnIPL;
-    public static javax.swing.JButton btnMicroRun;
     public static javax.swing.JButton btnSingleStep;
-    public static javax.swing.JButton btnStepRun;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
@@ -1103,14 +778,11 @@ public class ControlPanel extends javax.swing.JFrame {
     private javax.swing.JFrame jFrame3;
     private javax.swing.JFrame jFrame4;
     private javax.swing.JFrame jFrame5;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel2;
     public static javax.swing.JTextArea jMessages;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton10;
@@ -1137,11 +809,8 @@ public class ControlPanel extends javax.swing.JFrame {
     private javax.swing.JLabel label1;
     private javax.swing.JLabel label2;
     public static javax.swing.JLabel lblCC;
-    private javax.swing.JLabel lblONOFF;
     private javax.swing.JLabel lblOpcode;
     public static javax.swing.JLabel lblPC;
-    private javax.swing.JTextField txtMemoryAddr;
-    private javax.swing.JTextField txtMemoryValue;
     // End of variables declaration//GEN-END:variables
 
     /**
