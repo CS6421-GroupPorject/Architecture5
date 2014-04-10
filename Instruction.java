@@ -120,11 +120,7 @@ public class Instruction extends Thread {
     }
         
     private void executeOneInst(){
-        singleInstruction();
-    }
-    
-    public void singleInstruction(){
-        
+                
         String opcodeCondition = new String();
         isStarted = true;
         isRunning = true;
