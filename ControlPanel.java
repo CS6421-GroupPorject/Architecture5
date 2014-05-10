@@ -59,7 +59,8 @@ public class ControlPanel extends javax.swing.JFrame {
                 //System.out.println("tester");
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {
                 char key = e.getKeyChar();
-                if ((key >= '1' && key <= 'z') || (key >= 'A' && key <= 'Z')){
+                if (key >= 'a' && key <= 'z') key=(char) (key-32);
+                if ((key >= '1' && key <= 'Z')){
                     KEYBORD.jButtonActionPerformed(key);
                 } else if (key == KeyEvent.VK_ENTER){
                     KEYBORD.jButtonCRActionPerformed();
@@ -426,6 +427,7 @@ public class ControlPanel extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jMessages.setEditable(false);
         jMessages.setColumns(10);
         jMessages.setRows(5);
         jMessages.setAutoscrolls(false);
@@ -460,10 +462,18 @@ public class ControlPanel extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(label)
+                        .addGap(48, 48, 48))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addContainerGap()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addContainerGap()
+                                .addComponent(jLabel15)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCC)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(jLabel13)
@@ -472,20 +482,10 @@ public class ControlPanel extends javax.swing.JFrame {
                                     .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addComponent(jLabel14)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblPC))
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(jLabel15)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblCC)))
+                                        .addComponent(lblPC)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnClr))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(label)
-                                .addGap(23, 23, 23)))
-                        .addGap(0, 25, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1)))
+                            .addComponent(jScrollPane1))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -647,7 +647,7 @@ public class ControlPanel extends javax.swing.JFrame {
                 .addComponent(IX3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(MAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 9, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -686,7 +686,7 @@ public class ControlPanel extends javax.swing.JFrame {
         
         if (this.running) {
           //stop running the bootloader if it's reading file,or stop the processor if it's executing instructions
-            getmBootLoader().stopRunning("Turn off by user.");
+           getmBootLoader().stopRunning("Turn off by user.");
             
         }
         else {
@@ -737,6 +737,10 @@ public class ControlPanel extends javax.swing.JFrame {
             IX3.set(Long.toBinaryString(511));
             IX1.set(Long.toBinaryString(0));
             IX2.set(Long.toBinaryString(160)); 
+            
+             // Send Cursor to the Printer (_?)
+            PRINTER.GetData("1011111", false);
+            PRINTER.GetData("111111", false);
         }
         else if (PROGRAM==2) {
                  /**
@@ -761,6 +765,10 @@ public class ControlPanel extends javax.swing.JFrame {
         IX3.set(Long.toBinaryString(511));
         IX1.set(Long.toBinaryString(100));
         IX2.set(Long.toBinaryString(160));
+        
+        // Send Cursor to the Printer (_?)
+        PRINTER.GetData("1011111", false);
+        PRINTER.GetData("111111", false);
         
        
         }

@@ -34,7 +34,7 @@ public class Output extends javax.swing.JPanel {
         int i = Integer.parseInt(s, 2);
         char c = (char) i;
         if (c==13) 
-            OUTPUT += String.format("%s","<br>");
+            OUTPUT += String.format("%s","<br>_ ");
         else {
             if (!numeric)
                 OUTPUT = OUTPUT + String.format("%s",c);
