@@ -7,11 +7,33 @@
 
 package simulator;
 
-public final class Instruction extends Thread   {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Timer;
+
+public class PipelinedInstruction extends Thread {
     
-      
+    /* Contants used to decide the position of pause */
+    static final int BEGIN  = 0;    // pause at the beginning
+    static final int MIDDLE = 1;    // pause in the process
+    static final int END    = 2;    // pause at the end
+    
+    /* this indicator shows whether running is started */
+    boolean isStarted = false;
+    
+    /* this indicator shows whether this Instructions is done */
+    boolean isFinished = false;
+    
+    /* this indicator shows the status of this instructionThread (running/pause) */
+    boolean isRunning = false;
+    
+    /* this indicator shows whether this instructionThread is sleep */
+    boolean isSleep = false;
+    
     /* number of instructions left */
-    private int instructionNum = 1;
+    private int instructionNum = 0;
     
     /* parameters from controlPanel */
     private File XF, RF, I, T;
@@ -31,18 +53,67 @@ public final class Instruction extends Thread   {
     private Register FR0, FR1;
     
     private String pfileName = "";
-   
     
+    private Timer timer1, timer2;
+   
+    ActionListener action = new ActionListener()
+    {   
+            @Override
+            public void actionPerformed(ActionEvent event)
+            { 
+                if(!MEMORY.get(PC.get()).substring(0,6).equals("000000")){
+                    ControlPanel.lblPC.setText(String.format("%s", Integer.parseInt(PC.get(),2)));
+                    controlPanel.getMAR().set(PC.get());
+                    controlPanel.getMBR().set(controlPanel.MEMORY.get(controlPanel.getMAR().get()));
+                    strSwitches=controlPanel.MEMORY.get(controlPanel.getMAR().get());
+                    executeOneInst(); 
+                
+             }
+                else {
+                    timer1.stop();
+                    timer2.stop();
+                    getControlPanel().jMessages.append("Program running Completed!\n");
+                }
+            }
+        };
+    
+      
     private ControlPanel controlPanel = null;
     
     /* constructor */
-    public Instruction(ControlPanel controlPanel){
+    public PipelinedInstruction(ControlPanel controlPanel){
         this.controlPanel = controlPanel;
     }
     
+        private void executeOneInst(){
+                
+        isStarted = true;
+        isRunning = true;
+        isFinished = false;
+
+        instructionNum++;
+        String sMsg = String.format("Instruction-%s is in FETCH Stage\n", instructionNum);
+        controlPanel.jMessages.append(sMsg);
+        IF();
+        
+      
+        sMsg = String.format("Instruction-%s is in DECODE Stage\n", instructionNum);
+        controlPanel.jMessages.append(sMsg);
+        ID();
+        
+        sMsg = String.format("Instruction-%s is in EXECUTION Stage\n", instructionNum);
+        controlPanel.jMessages.append(sMsg);
+        EXE();
+         
+        pause(END);
+        isFinished = true;
+        isRunning = false;
+   
+    }
+    
+    /* Override run() in java.lang.Thread */
     @Override
     public void run() {
-   
         String sAddr;
         
         /* set the value of parameters in instructionThread */
@@ -50,7 +121,7 @@ public final class Instruction extends Thread   {
         setRF(controlPanel.RF);
         setI(controlPanel.I);
         setT(controlPanel.T);
-        setMEMORY(ControlPanel.MEMORY);
+        setMEMORY(controlPanel.MEMORY);
         setALU(controlPanel.ALU);
         setIR(controlPanel.IR);
         setOPCODE(controlPanel.OPCODE);
@@ -73,48 +144,43 @@ public final class Instruction extends Thread   {
         sAddr = Long.toBinaryString(512);
         sAddr = String.format("%0" + (20-sAddr.length())+ "d", 0) + sAddr;
         PC.set(sAddr);
-
+        
         if (controlPanel.runType != 5){ // run a program in a file
             
+            timer1 = new Timer (1000, action);
+            timer1.start ();
+            executeOneInst();
+          
             controlPanel.jMessages.append("Boot Completed!\n");
            
-            //HLT
-            while(!MEMORY.get(PC.get()).substring(0,6).equals("000000")){
-                
-                ControlPanel.lblPC.setText(String.format("%s", Integer.parseInt(PC.get(),2)));
-                controlPanel.getMAR().set(PC.get());
-                controlPanel.getMBR().set(controlPanel.MEMORY.get(controlPanel.getMAR().get()));
-                controlPanel.strSwitches=controlPanel.MEMORY.get(controlPanel.getMAR().get());
-                executeOneInst();
-
-            }
-            //HLT
-             getControlPanel().jMessages.append("Program running Completed!\n");
-            
         }
         
         else {
             executeOneInst();
         }
-     }  
+        isStarted = false;
+       
+    }
     
+    private void IF(){        
+        IR.set(MEMORY.get(PC.get()));
+    }
+    
+    private void ID(){
         
-    private void executeOneInst(){
-                
         String opcodeCondition = new String();
        
-    	if (controlPanel.runType!=5){
-        IR.set(MEMORY.get(PC.get()));
-         opcodeCondition = IR.get().substring(0, 6);
+        if (controlPanel.runType!=5){
+        
+        opcodeCondition = IR.get().substring(0, 6);
          
         }
         else {
-            IR.set(strSwitches);
+           
             opcodeCondition = strSwitches.substring(0, 6);
         }
-        strSwitches=IR.get();
-            
-          if (opcodeCondition.equals("010100") || opcodeCondition.equals("010101")
+    
+         if (opcodeCondition.equals("010100") || opcodeCondition.equals("010101")
                   || opcodeCondition.equals("010110") || opcodeCondition.equals("010111")
                   || opcodeCondition.equals("011000") || opcodeCondition.equals("011001")) {
               DecodeArithRtoR();
@@ -127,8 +193,12 @@ public final class Instruction extends Thread   {
               Decode();
           }
          controlPanel.getLblOpcode().setText(OPCODE.get());
+    
+    }
+    
+    private void EXE(){
         
-         switch (Integer.parseInt(OPCODE.get(),2)) {
+        switch (Integer.parseInt(OPCODE.get(),2)) {
               case 0:
                  AppendInstructionAsText("HLT");
                  HLT();
@@ -205,6 +275,7 @@ public final class Instruction extends Thread   {
                case 20:
                    AppendInstructionAsText("MLT");
                    MLT();
+                   
                    break;
               case 21:
                    AppendInstructionAsText("DVD");
@@ -235,35 +306,35 @@ public final class Instruction extends Thread   {
                    RRC();
                   break;
               //--------------------------------------------------------------------------------       
-            // Floating Points and Vecter Instruction
-                  case 33:
-                      AppendInstructionAsText("FADD");
-                      FADD();
-                      break;
-                  case 34:
-                      AppendInstructionAsText("FSUB");
-                      FSUB();
-                      break;
-                  case 35:
-                      AppendInstructionAsText("VADD");
-                      VADD();
-                      break;
-                  case 36:
-                      AppendInstructionAsText("VSUB");
-                      VSUB();
-                      break;
-                  case 37:
-                      AppendInstructionAsText("CNVRT");
-                      CNVRT();
-                      break;
-                  case 50:
-                      AppendInstructionAsText("LDFR");
-                      LDFR();
-                      break;
-                  case 51:
-                      AppendInstructionAsText("STFR");
-                      STFR();
-                      break;
+          // Floating Points and Vecter Instruction
+              case 33:
+                  AppendInstructionAsText("FADD");
+                  FADD();
+                  break;
+              case 34:
+                  AppendInstructionAsText("FSUB");
+                  FSUB();
+                  break;
+              case 35:
+                  AppendInstructionAsText("VADD");
+                  VADD();
+                  break;
+              case 36:
+                  AppendInstructionAsText("VSUB");
+                  VSUB();
+                  break;
+              case 37:
+                  AppendInstructionAsText("CNVRT");
+                  CNVRT();
+                  break;
+              case 50:
+                  AppendInstructionAsText("LDFR");
+                  LDFR();
+                  break;
+              case 51:
+                  AppendInstructionAsText("STFR");
+                  STFR();
+                  break;
            //--------------------------------------------------------------------------------------------      
               case 41:
                   AppendInstructionAsText("LDX");
@@ -290,11 +361,154 @@ public final class Instruction extends Thread   {
           }  
          
          ControlPanel.lblPC.setText(String.format("%s", Integer.parseInt(PC.get(),2)));
-        
-         
+    
     }
+        
 
-     
+
+    public void pause(int pauseType) {
+        switch (controlPanel.runType) {
+            case 1: // run without stop
+                break;
+            
+            case 2: // pause between instructions
+                if (isRunning) {
+
+                    switch (pauseType) {
+                        case 0:
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+
+                            isRunning = false;
+                            this.suspend();     // Suspend instructionThread
+                                        
+                            while(!isRunning) {  //  wait until the work in main thread
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    getControlPanel().jMessages.append("Error: Cannot pause!\nThread is already stopped\n");
+                }
+                break;
+            
+            case 3: // pause between micro steps
+                if (isRunning) {
+
+                    switch (pauseType) {
+                        case 0:
+                            break;
+                        case 1:
+                            isRunning = false;
+                            this.suspend();     // Suspend instructionThread
+                            while(!isRunning) {  //  wait until the work in main thread
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            break;
+                        case 2:
+                            isRunning = false;
+                            this.suspend();     // Suspend instructionThread
+                            while(!isRunning) {  //  wait until the work in main thread
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    getControlPanel().jMessages.append("Error: Cannot pause!\nThread is already stopped\n");
+                }
+                break;
+            
+            case 4: // pause for some time
+                if (isRunning) {
+                    switch (pauseType) {
+                        case 0:
+                            isSleep = true;
+                            try {
+                                Thread.sleep(1200);     // wait for some time at the end of instructions
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(PipelinedInstruction.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            isSleep = false;
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    getControlPanel().jMessages.append("Error: Cannot pause!\nThread is already stopped\n");
+                }
+                break;
+                
+            case 5: // single Instructions mode
+                if (isRunning) {
+
+                    switch (pauseType) {
+                        case 0:
+                            break;
+                        case 1:
+                            //getControlPanel().jMessages.append("Status: \""+strSwitches+"\" is running!\n Click \"Run Single Step\" to continue!\n");
+                            ControlPanel.btnSingleStep.setText("Click again to continue...");
+                            isRunning = false;
+                            this.suspend();     // Suspend instructionThread
+                            while(!isRunning) {  //  wait until the work in main thread
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            break;
+                        case 2:
+                            isRunning = false;
+                            ControlPanel.btnSingleStep.setText("Run Single Instruction (Step by Step)");
+                            this.suspend();     // Suspend instructionThread
+                            while(!isRunning) {  //  wait until the work in main thread
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    getControlPanel().jMessages.append("Error: Cannot pause!\nThread is already stopped\n");
+                }
+                break;
+                    
+            default:
+                break;
+        }
+        
+    }
+    
     private void AppendInstructionAsText(String sInst) {
         
         String sTxt="";
@@ -364,8 +578,11 @@ public final class Instruction extends Thread   {
         if (getXF().get().equals("00") & getI().get().equals("0")) {
             
             getMAR().set(getADDR().get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()));
-          
+            pause(MIDDLE);
+           
+           
         }
        
         else if ((getXF().get().equals("01")||getXF().get().equals("10")||getXF().get().equals("11")) & getI().get().equals("0") )  {  
@@ -374,16 +591,23 @@ public final class Instruction extends Thread   {
             getALU().OP2.set(SelectIndexRegister().get());
             getALU().add(); 
             getMAR().set(getALU().RES.get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()));
+            pause(MIDDLE);
+
         }
         
         else if (getXF().get().equals("00") & getI().get().equals("1")) {
             getMAR().set(getADDR().get());
+            pause(MIDDLE);
             memoryAddr = getMAR().get();
             getMBR().set(getMEMORY().get(memoryAddr));
+            pause(MIDDLE);
             getMAR().set(getMBR().get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()));
-   
+            pause(MIDDLE);
+     
         }
         
         else {
@@ -391,7 +615,10 @@ public final class Instruction extends Thread   {
             getALU().OP2.set(SelectIndexRegister().get());
             getALU().add();
             getMAR().set(getMEMORY().get(getALU().RES.get()));
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()));
+            pause(MIDDLE);
+
         }
    
    }
@@ -424,7 +651,8 @@ public final class Instruction extends Thread   {
         pcIncrease();
         ComputeEffectiveAddress();
         SelectRegister().set(getMBR().get());
-       
+        pause(MIDDLE);
+    
     }
     
     /**
@@ -445,7 +673,8 @@ public final class Instruction extends Thread   {
          pcIncrease();
          ComputeEffectiveAddress();
          SelectRegister().set(getMAR().get());
-      
+         pause(MIDDLE);
+         
     }
     
      /**
@@ -458,6 +687,7 @@ public final class Instruction extends Thread   {
         getALU().OP1.set(SelectRegister().get());
         getALU().sub();
         SelectRegister().set(getALU().RES.get());
+        pause(MIDDLE);
         
     }     
     
@@ -472,7 +702,8 @@ public final class Instruction extends Thread   {
         getALU().OP1.set(SelectRegister().get());
         getALU().add();
         SelectRegister().set(getALU().RES.get());
-     
+        pause(MIDDLE);
+         
   }     
     
     /**
@@ -485,7 +716,8 @@ public final class Instruction extends Thread   {
     	  getALU().OP1.set(SelectRegister().get());
     	  getALU().add();
     	  SelectRegister().set (getALU().RES.get());
-      
+          pause(MIDDLE);
+    
     }
     
    /**
@@ -498,7 +730,8 @@ public final class Instruction extends Thread   {
     	  getALU().OP1.set(SelectRegister().get());
     	  getALU().sub();
     	  SelectRegister().set (getALU().RES.get());
-   }
+          pause(MIDDLE);
+    }
     
       public void AIX(){
           pcIncrease();
@@ -507,7 +740,7 @@ public final class Instruction extends Thread   {
     	  getALU().OP1.set(SelectIndexRegister().get());
     	  getALU().add();
     	  SelectIndexRegister().set (getALU().RES.get());
-         
+          pause(MIDDLE);
     }
       
        public void SIX(){
@@ -517,7 +750,7 @@ public final class Instruction extends Thread   {
     	  getALU().OP1.set(SelectIndexRegister().get());
     	  getALU().sub();
     	  SelectIndexRegister().set (getALU().RES.get());
-          
+          pause(MIDDLE);
     }
     
     /**
@@ -527,7 +760,8 @@ public final class Instruction extends Thread   {
         pcIncrease();
         computeEffectiveAddressForNonIndex();
         SelectIndexRegister().set(getMBR().get());
-       
+        pause(MIDDLE);
+    
     }
     
     /**
@@ -628,7 +862,7 @@ public final class Instruction extends Thread   {
         getALU().add();
         getRF().set("11"); // select Register 3 by seting Register File
         SelectRegister().set(getALU().RES.get()); // R3 <- PC+1
-        
+        pause(MIDDLE);
         if (getI().get().equals("1")) 
             getPC().set(getMEMORY().get(getMAR().get())); // PC <- c(EA)
        // R0 should contain pointer to args. Arguments list should end with -17777 ???????
@@ -643,6 +877,7 @@ public final class Instruction extends Thread   {
         ComputeEffectiveAddress();
         getRF().set("00"); //select Register 0 by seting Register File
         SelectRegister().set(getADDR().get()); // R0 <- Immed
+        pause(MIDDLE);
         getRF().set("11"); //select Register 3 by seting Register File
         getPC().set(SelectRegister().get()); // PC <- c(R3)
                
@@ -714,7 +949,7 @@ public final class Instruction extends Thread   {
             //String Result = ALU.RESlong.get();
             //SelectRegister().set(getALU().RESlong.get().substring(0, 20));
             SelectRegister().set(getALU().RES.get());
-            
+            pause(MIDDLE);
 //            SelectRegister().set(getALU().RESlong.get().substring(20, 40));
 //            pause(MIDDLE);
             
@@ -741,9 +976,9 @@ public final class Instruction extends Thread   {
                 getALU().divide();//Op2/OP1
             //RF.set(RFcopy);
             SelectRegister().set(getALU().RES.get());
-           
+            pause(MIDDLE);
             SelectNextRegister().set(getALU().RES1.get());
-           
+            pause(MIDDLE);
             }
         }
 
@@ -781,7 +1016,7 @@ public final class Instruction extends Thread   {
         getALU().and();
         //RF.set(RFcopy);
         SelectRegister().set(getALU().RES.get());
-       
+        pause(MIDDLE);
 
     }
 
@@ -794,7 +1029,7 @@ public final class Instruction extends Thread   {
         getALU().orr();
         //RF.set(RFcopy);
         SelectRegister().set(getALU().RES.get());
-        
+        pause(MIDDLE);
     }
 
     public void NOT() {
@@ -804,7 +1039,7 @@ public final class Instruction extends Thread   {
         String test = getALU().OP1.get();
         getALU().not();
         SelectRegister().set(getALU().RES.get());
-        
+        pause(MIDDLE);
     }
     
     public void SRC(){
@@ -814,24 +1049,24 @@ public final class Instruction extends Thread   {
         if (getI().get().equals("0")&&getT().get().equals("0")){
                 getALU().arithShiftRight(number);
             SelectRegister().set(getALU().RES.get());
-            
+            pause(MIDDLE);
         }
         else if (getI().get().equals("0")&&getT().get().equals("1"))
         {
                 getALU().arithShiftLeft(number);
             SelectRegister().set(getALU().RES.get());
-           
+            pause(MIDDLE);
         }
         else if (getI().get().equals("1")&&getT().get().equals("0")){
                 getALU().logicalShiftRight(number);
             SelectRegister().set(getALU().RES.get());
-           
+            pause(MIDDLE);
         }
 
         else {
             getALU().logicalShiftLeft(number);
             SelectRegister().set(getALU().RES.get());
-           
+            pause(MIDDLE);
         }
     }
     
@@ -842,13 +1077,13 @@ public final class Instruction extends Thread   {
          if (getI().get().equals("1")&&getT().get().equals("0")){
             getALU().logicalRotateRight(number);
          SelectRegister().set(getALU().RES.get());
-         
+         pause(MIDDLE);
 
          }
          else 
          getALU().logicalRotateLeft(number);
          SelectRegister().set(getALU().RES.get());
-         
+         pause(MIDDLE);
     }
      
      public void IN() {
@@ -885,7 +1120,7 @@ public final class Instruction extends Thread   {
           
           switch (Integer.parseInt(DEVID.get(),2)){
               case 1:
-                  PRINTER.GetData(SelectRegister().get(), controlPanel.numericPrint);
+                  PRINTER.GetData(SelectRegister().get(), true);
                   
                   break;
               case 2:
@@ -912,9 +1147,11 @@ public final class Instruction extends Thread   {
                   SelectRegister().set(PRINTER.STATUS);
                   break;
           }
-      }
-                  
-      /**
+          
+      }        
+         // pause(MIDDLE);
+          
+     /**
      * Floating add memory to register
      */
     public void FADD(){
@@ -925,9 +1162,9 @@ public final class Instruction extends Thread   {
         getALU().OP1.set(SelectFloatingRegister().get());
         getALU().add();
         SelectFloatingRegister().set(getALU().RES.get());
-    
+        pause(MIDDLE);
          
-    }     
+  }     
    
     /**
       * Floating subtract memory from register
@@ -939,6 +1176,7 @@ public final class Instruction extends Thread   {
         getALU().OP1.set(SelectFloatingRegister().get());
         getALU().sub();
         SelectFloatingRegister().set(getALU().RES.get());
+        pause(MIDDLE);
         
     }     
     
@@ -988,15 +1226,21 @@ public final class Instruction extends Thread   {
         // Compute address in a special way in this instruction(The x field is used to store the value of F).
         if (getI().get().equals("0")) {
             getMAR().set(getADDR().get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()));
+            pause(MIDDLE);
         }
        else{
             getMAR().set(getADDR().get());
+            pause(MIDDLE);
             memoryAddr = getMAR().get();
             getMBR().set(getMEMORY().get(memoryAddr));
+            pause(MIDDLE);
             getMAR().set(getMBR().get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()));
-       }
+            pause(MIDDLE);
+        }
         
         if(getXF().get().equals("00")) {
             SelectRegister().set(
@@ -1047,7 +1291,9 @@ public final class Instruction extends Thread   {
         if (getXF().get().equals("00") & getI().get().equals("0")) {
             
             getMAR().set(getADDR().get()+vector);
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()+i));
+            pause(MIDDLE);
            
            
         }
@@ -1058,16 +1304,22 @@ public final class Instruction extends Thread   {
             getALU().OP2.set(SelectIndexRegister().get());
             getALU().add(); 
             getMAR().set(getALU().RES.get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()+i));
+            pause(MIDDLE);
 
         }
         
         else if (getXF().get().equals("00") & getI().get().equals("1")) {
             getMAR().set(getADDR().get()+vector);
+            pause(MIDDLE);
             memoryAddr = getMAR().get();
             getMBR().set(getMEMORY().get(memoryAddr));
+            pause(MIDDLE);
             getMAR().set(getMBR().get());
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()+i));
+            pause(MIDDLE);
      
         }
         
@@ -1076,13 +1328,13 @@ public final class Instruction extends Thread   {
             getALU().OP2.set(SelectIndexRegister().get());
             getALU().add();
             getMAR().set(getMEMORY().get(getALU().RES.get()));
+            pause(MIDDLE);
             getMBR().set(getMEMORY().get(getMAR().get()+i));
+            pause(MIDDLE);
 
         }
         
     }
-          
-     
     
      /**
    * This function select General Purpose Register 
@@ -1613,5 +1865,4 @@ public final class Instruction extends Thread   {
         this.FR1 = FR1;
     }
 }
-    
 

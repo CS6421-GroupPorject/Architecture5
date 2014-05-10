@@ -32,7 +32,7 @@ public class RomLoader {
 	
 	
 	/**
-	 * @return all read instruction count 
+	 * @return all read Instructions count 
 	 */
 	public int getInstructCount() {
 		return InstructCount;
@@ -70,19 +70,19 @@ public class RomLoader {
         while (line != null && !mStopFlag) { 
         	InstructCount++;
         	decodeInstruction(line);
-                ControlPanel.jMessages.append(line+"\n");
+                //ControlPanel.jMessages.append(line+"\n");
                 line = br.readLine(); 
         }
         if (line==null) {
             if (mControlPanel.runType == 1) {
-                        mControlPanel.programInstructionThread = new Instruction(mControlPanel);
-                        mControlPanel.programInstructionThread.setPfileName(pfilePath);
-			mControlPanel.programInstructionThread.start();
+                        mControlPanel.Instructions = new Instruction(mControlPanel);
+                        mControlPanel.Instructions.setPfileName(pfilePath);
+			mControlPanel.Instructions.start();
             }
             else{
-                        mControlPanel.instructionThread = new Instruction(mControlPanel);
-                        mControlPanel.instructionThread.setPfileName(pfilePath);
-			mControlPanel.instructionThread.start();
+                        mControlPanel.PipelinedInstructions = new PipelinedInstruction(mControlPanel);
+                        mControlPanel.PipelinedInstructions.setPfileName(pfilePath);
+			mControlPanel.PipelinedInstructions.start();
             }
                        
 		}
@@ -90,7 +90,7 @@ public class RomLoader {
 	
 	/**
 	 * decode machine instructions to 20bits binary code
-	 * @param a line in the txt file,which is the instruction to be decoded
+	 * @param a line in the txt file,which is the Instructions to be decoded
 	 */
 	private void decodeInstruction(String pOneInst) {
 		String binaryInst="";
@@ -112,8 +112,8 @@ public class RomLoader {
 	}
 	
 	/**
-	 * store the current read instruction into the memory bank
-	 * @param the binary instruction to be stored into the memory bank
+	 * store the current read Instructions into the memory bank
+	 * @param the binary Instructions to be stored into the memory bank
 	 */
 	private void storeInstruction(String pBineryInst) {
 		if (InstructCount>BOOT_ADD_LIMIT) {

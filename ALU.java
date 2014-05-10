@@ -27,11 +27,20 @@ public class ALU {
      * Result is loaded to RES register
      * 
      */
-    public void add() {
+     public void add() {
         int op1Int = convertStringtoSignedValue(OP1.get());
         int op2Int = convertStringtoSignedValue(OP2.get());
         int subResult = op1Int+op2Int;
-        RES.set( Long.toBinaryString(subResult));
+        if (subResult>=0){
+        RES.set( Long.toBinaryString(subResult));}
+        else {
+            subResult=-subResult;       
+            RES.set(Long.toBinaryString(subResult));
+            String temp = RES.get();
+            temp = "1"+temp.substring(1,20);
+            RES.set(temp);
+      
+        }
           
     }
     

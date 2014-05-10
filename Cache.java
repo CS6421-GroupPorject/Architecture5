@@ -79,7 +79,7 @@ public class Cache {
                 CACHE_DATA[i][5] = Integer.parseInt(sOffSet.substring(0,1)); // first bit of offset 01 -> 1
                 CACHE_DATA[i][6] = Integer.parseInt(sOffSet.substring(1,2)); // second bit of offset 01 -> 0
                //System.out.println("Read Hit!");
-                ControlPanel.jMessages.append("Read Hit!\n");
+               // ControlPanel.jMessages.append("Read Hit!\n");
                 
                 
                 OntheCache = true;
@@ -104,7 +104,7 @@ public class Cache {
              * write buffer, after read-miss finishes, write-back will be done
              */
             //System.out.println("Read Miss!");
-            ControlPanel.jMessages.append("Read Miss!\n");
+           // ControlPanel.jMessages.append("Read Miss!\n");
             
             block = TAG%16; // This block will be exchanged
             if  (CACHE_DATA[block][1] == 1) { //if it is dirty, write back to memory
@@ -151,7 +151,7 @@ public class Cache {
            sMsg = sMsg + String.format("%s",TAG+i-1) + "-";
            
        }
-       ControlPanel.jMessages.append("CACHE(" + block + ") --> " + sMsg.substring(0, sMsg.length()-1) + "\n");
+      // ControlPanel.jMessages.append("CACHE(" + block + ") --> " + sMsg.substring(0, sMsg.length()-1) + "\n");
              
     }
     
@@ -191,7 +191,7 @@ public class Cache {
                 CACHE_DATA[i][5] = Integer.parseInt(sOffSet.substring(0,1)); // first bit of offset 01 -> 1
                 CACHE_DATA[i][6] = Integer.parseInt(sOffSet.substring(1,2)); // second bit of offset 01 -> 0
                 UpdateWordInBlock(i,WORD);
-                ControlPanel.jMessages.append("Write Hit!\n");
+              //  ControlPanel.jMessages.append("Write Hit!\n");
                 OntheCache = true;
                 break;
             }
@@ -204,7 +204,7 @@ public class Cache {
               * Fetch words from Memory
               */ 
           //System.out.println("Write Miss!");
-            ControlPanel.jMessages.append("Write Miss!\n");
+          //  ControlPanel.jMessages.append("Write Miss!\n");
             sAddr = Long.toBinaryString(Addr);
             sAddr = String.format("%0" + (20-sAddr.length())+ "d", 0) + sAddr;
             ControlPanel.MEMORY.setDirect(WORD, sAddr);

@@ -14,10 +14,6 @@ import javax.swing.JButton;
 
 public class Input extends javax.swing.JPanel {
 
- 
-    private static int[] a= new int[5];
-    private static int counter=0; 
-    private static int counterInputNum = 1;
     private String INPUT_BUFFER = "";
     private int ASCII;
     // if the keyboard status bit is 0 that means no key pressed 
@@ -540,6 +536,22 @@ public class Input extends javax.swing.JPanel {
          this.INPUT_BUFFER = Long.toBinaryString(ASCII);
        
     }
+   
+    public void jButtonActionPerformed(char c) {
+       
+         ASCII = (int) c; 	
+         this.STATUS = "1";
+         this.INPUT_BUFFER = Long.toBinaryString(ASCII);
+       
+    }
+    
+      public void jButtonCRActionPerformed(){
+          ASCII = 13;
+          this.STATUS = "1";
+          this.INPUT_BUFFER = Long.toBinaryString(ASCII);
+    }
+    
+    
     
    /**
     * This method is used for Carriage return button pressed.
@@ -560,7 +572,6 @@ public class Input extends javax.swing.JPanel {
      */
     public String SendData(){
         STATUS = "0";
-        
         return INPUT_BUFFER;
         
     }

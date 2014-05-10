@@ -29,13 +29,27 @@ public class Output extends javax.swing.JPanel {
      * This method get data to be printed from the registers.And shows as a label.
      * @param s data to be printed.
      */
-    public void GetData(String s) {
+    public void GetData(String s, boolean numeric) {
         STATUS = "0";
-        OUTPUT += String.format("%s",Integer.parseInt(s,2)) + "<br>";
+        int i = Integer.parseInt(s, 2);
+        char c = (char) i;
+        if (c==13) 
+            OUTPUT += String.format("%s","<br>");
+        else {
+            if (!numeric)
+                OUTPUT = OUTPUT + String.format("%s",c);
+            else
+                OUTPUT = OUTPUT + String.format("%s",i) + "<br>";
+        }
+            //OUTPUT += String.format("%s%s",(numeric)?i:c, (numeric)?"<br>":"");
+        
+        
         jLabel.setText("<html>" + OUTPUT + "</html>");
         STATUS = "1";
      
     }
+    
+   
     
     /**
      * This is the initialization for the printer panel. 
